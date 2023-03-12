@@ -18,190 +18,134 @@
 	.param .u64 filter_w_output_layer_param_2
 )
 {
-	.reg .pred 	%p<5>;
-	.reg .b32 	%r<8>;
-	.reg .f64 	%fd<32>;
+	.reg .pred 	%p<4>;
+	.reg .b32 	%r<13>;
+	.reg .f64 	%fd<66>;
 	.reg .b64 	%rd<19>;
 
 
-	ld.param.u64 	%rd8, [filter_w_output_layer_param_0];
-	ld.param.u64 	%rd9, [filter_w_output_layer_param_1];
-	ld.param.u64 	%rd10, [filter_w_output_layer_param_2];
-	mov.u32 	%r1, %ctaid.x;
-	setp.gt.u32	%p1, %r1, 19;
-	mov.u32 	%r2, %tid.x;
-	setp.gt.u32	%p2, %r2, 19;
-	or.pred  	%p3, %p1, %p2;
-	@%p3 bra 	BB0_3;
+	ld.param.u64 	%rd6, [filter_w_output_layer_param_0];
+	ld.param.u64 	%rd7, [filter_w_output_layer_param_1];
+	ld.param.u64 	%rd8, [filter_w_output_layer_param_2];
+	mov.u32 	%r1, %tid.x;
+	setp.gt.u32	%p1, %r1, 9;
+	@%p1 bra 	BB0_5;
 
-	cvta.to.global.u64 	%rd11, %rd8;
-	mul.wide.u32 	%rd12, %r1, 160;
-	add.s64 	%rd13, %rd11, %rd12;
-	mul.wide.u32 	%rd14, %r2, 8;
-	add.s64 	%rd1, %rd13, %rd14;
-	mad.lo.s32 	%r6, %r1, 20, %r2;
-	cvta.to.global.u64 	%rd15, %rd9;
-	mul.wide.u32 	%rd16, %r6, 8;
-	add.s64 	%rd18, %rd15, %rd16;
-	cvta.to.global.u64 	%rd17, %rd10;
+	cvta.to.global.u64 	%rd1, %rd7;
+	cvta.to.global.u64 	%rd9, %rd8;
+	cvt.u64.u32	%rd2, %r1;
+	mul.wide.u32 	%rd10, %r1, 8;
+	add.s64 	%rd3, %rd9, %rd10;
+	ld.global.f64 	%fd65, [%rd3];
+	cvta.to.global.u64 	%rd4, %rd6;
 	mov.u32 	%r7, 0;
+	mul.lo.s64 	%rd15, %rd2, 32000;
+	add.s64 	%rd16, %rd1, %rd15;
+	mov.u32 	%r11, %r7;
 
 BB0_2:
-	ld.global.f64 	%fd1, [%rd18];
-	ld.global.f64 	%fd2, [%rd1];
-	ld.global.f64 	%fd3, [%rd17];
-	fma.rn.f64 	%fd4, %fd2, %fd1, %fd3;
-	st.global.f64 	[%rd17], %fd4;
-	ld.global.f64 	%fd5, [%rd18+3200];
-	ld.global.f64 	%fd6, [%rd1+3200];
-	fma.rn.f64 	%fd7, %fd6, %fd5, %fd4;
-	st.global.f64 	[%rd17], %fd7;
-	ld.global.f64 	%fd8, [%rd18+6400];
-	ld.global.f64 	%fd9, [%rd1+6400];
-	fma.rn.f64 	%fd10, %fd9, %fd8, %fd7;
-	st.global.f64 	[%rd17], %fd10;
-	ld.global.f64 	%fd11, [%rd18+9600];
-	ld.global.f64 	%fd12, [%rd1+9600];
-	fma.rn.f64 	%fd13, %fd12, %fd11, %fd10;
-	st.global.f64 	[%rd17], %fd13;
-	ld.global.f64 	%fd14, [%rd18+12800];
-	ld.global.f64 	%fd15, [%rd1+12800];
-	fma.rn.f64 	%fd16, %fd15, %fd14, %fd13;
-	st.global.f64 	[%rd17], %fd16;
-	ld.global.f64 	%fd17, [%rd18+16000];
-	ld.global.f64 	%fd18, [%rd1+16000];
-	fma.rn.f64 	%fd19, %fd18, %fd17, %fd16;
-	st.global.f64 	[%rd17], %fd19;
-	ld.global.f64 	%fd20, [%rd18+19200];
-	ld.global.f64 	%fd21, [%rd1+19200];
-	fma.rn.f64 	%fd22, %fd21, %fd20, %fd19;
-	st.global.f64 	[%rd17], %fd22;
-	ld.global.f64 	%fd23, [%rd18+22400];
-	ld.global.f64 	%fd24, [%rd1+22400];
-	fma.rn.f64 	%fd25, %fd24, %fd23, %fd22;
-	st.global.f64 	[%rd17], %fd25;
-	ld.global.f64 	%fd26, [%rd18+25600];
-	ld.global.f64 	%fd27, [%rd1+25600];
-	fma.rn.f64 	%fd28, %fd27, %fd26, %fd25;
-	st.global.f64 	[%rd17], %fd28;
-	ld.global.f64 	%fd29, [%rd18+28800];
-	ld.global.f64 	%fd30, [%rd1+28800];
-	fma.rn.f64 	%fd31, %fd30, %fd29, %fd28;
-	st.global.f64 	[%rd17], %fd31;
-	add.s64 	%rd18, %rd18, 32000;
-	add.s64 	%rd17, %rd17, 8;
-	add.s32 	%r7, %r7, 1;
-	setp.lt.s32	%p4, %r7, 10;
-	@%p4 bra 	BB0_2;
+	cvt.s64.s32	%rd5, %r11;
+	mul.lo.s32 	%r3, %r11, 400;
+	mov.u32 	%r12, %r7;
 
 BB0_3:
-	ret;
-}
+	mad.lo.s32 	%r9, %r12, 20, %r3;
+	mul.lo.s64 	%rd11, %rd5, 3200;
+	add.s64 	%rd12, %rd4, %rd11;
+	mul.wide.s32 	%rd13, %r12, 160;
+	add.s64 	%rd14, %rd12, %rd13;
+	mul.wide.s32 	%rd17, %r9, 8;
+	add.s64 	%rd18, %rd16, %rd17;
+	ld.global.f64 	%fd5, [%rd18];
+	ld.global.f64 	%fd6, [%rd14];
+	fma.rn.f64 	%fd7, %fd6, %fd5, %fd65;
+	st.global.f64 	[%rd3], %fd7;
+	ld.global.f64 	%fd8, [%rd18+8];
+	ld.global.f64 	%fd9, [%rd14+8];
+	fma.rn.f64 	%fd10, %fd9, %fd8, %fd7;
+	st.global.f64 	[%rd3], %fd10;
+	ld.global.f64 	%fd11, [%rd18+16];
+	ld.global.f64 	%fd12, [%rd14+16];
+	fma.rn.f64 	%fd13, %fd12, %fd11, %fd10;
+	st.global.f64 	[%rd3], %fd13;
+	ld.global.f64 	%fd14, [%rd18+24];
+	ld.global.f64 	%fd15, [%rd14+24];
+	fma.rn.f64 	%fd16, %fd15, %fd14, %fd13;
+	st.global.f64 	[%rd3], %fd16;
+	ld.global.f64 	%fd17, [%rd18+32];
+	ld.global.f64 	%fd18, [%rd14+32];
+	fma.rn.f64 	%fd19, %fd18, %fd17, %fd16;
+	st.global.f64 	[%rd3], %fd19;
+	ld.global.f64 	%fd20, [%rd18+40];
+	ld.global.f64 	%fd21, [%rd14+40];
+	fma.rn.f64 	%fd22, %fd21, %fd20, %fd19;
+	st.global.f64 	[%rd3], %fd22;
+	ld.global.f64 	%fd23, [%rd18+48];
+	ld.global.f64 	%fd24, [%rd14+48];
+	fma.rn.f64 	%fd25, %fd24, %fd23, %fd22;
+	st.global.f64 	[%rd3], %fd25;
+	ld.global.f64 	%fd26, [%rd18+56];
+	ld.global.f64 	%fd27, [%rd14+56];
+	fma.rn.f64 	%fd28, %fd27, %fd26, %fd25;
+	st.global.f64 	[%rd3], %fd28;
+	ld.global.f64 	%fd29, [%rd18+64];
+	ld.global.f64 	%fd30, [%rd14+64];
+	fma.rn.f64 	%fd31, %fd30, %fd29, %fd28;
+	st.global.f64 	[%rd3], %fd31;
+	ld.global.f64 	%fd32, [%rd18+72];
+	ld.global.f64 	%fd33, [%rd14+72];
+	fma.rn.f64 	%fd34, %fd33, %fd32, %fd31;
+	st.global.f64 	[%rd3], %fd34;
+	ld.global.f64 	%fd35, [%rd18+80];
+	ld.global.f64 	%fd36, [%rd14+80];
+	fma.rn.f64 	%fd37, %fd36, %fd35, %fd34;
+	st.global.f64 	[%rd3], %fd37;
+	ld.global.f64 	%fd38, [%rd18+88];
+	ld.global.f64 	%fd39, [%rd14+88];
+	fma.rn.f64 	%fd40, %fd39, %fd38, %fd37;
+	st.global.f64 	[%rd3], %fd40;
+	ld.global.f64 	%fd41, [%rd18+96];
+	ld.global.f64 	%fd42, [%rd14+96];
+	fma.rn.f64 	%fd43, %fd42, %fd41, %fd40;
+	st.global.f64 	[%rd3], %fd43;
+	ld.global.f64 	%fd44, [%rd18+104];
+	ld.global.f64 	%fd45, [%rd14+104];
+	fma.rn.f64 	%fd46, %fd45, %fd44, %fd43;
+	st.global.f64 	[%rd3], %fd46;
+	ld.global.f64 	%fd47, [%rd18+112];
+	ld.global.f64 	%fd48, [%rd14+112];
+	fma.rn.f64 	%fd49, %fd48, %fd47, %fd46;
+	st.global.f64 	[%rd3], %fd49;
+	ld.global.f64 	%fd50, [%rd18+120];
+	ld.global.f64 	%fd51, [%rd14+120];
+	fma.rn.f64 	%fd52, %fd51, %fd50, %fd49;
+	st.global.f64 	[%rd3], %fd52;
+	ld.global.f64 	%fd53, [%rd18+128];
+	ld.global.f64 	%fd54, [%rd14+128];
+	fma.rn.f64 	%fd55, %fd54, %fd53, %fd52;
+	st.global.f64 	[%rd3], %fd55;
+	ld.global.f64 	%fd56, [%rd18+136];
+	ld.global.f64 	%fd57, [%rd14+136];
+	fma.rn.f64 	%fd58, %fd57, %fd56, %fd55;
+	st.global.f64 	[%rd3], %fd58;
+	ld.global.f64 	%fd59, [%rd18+144];
+	ld.global.f64 	%fd60, [%rd14+144];
+	fma.rn.f64 	%fd61, %fd60, %fd59, %fd58;
+	st.global.f64 	[%rd3], %fd61;
+	ld.global.f64 	%fd62, [%rd18+152];
+	ld.global.f64 	%fd63, [%rd14+152];
+	fma.rn.f64 	%fd65, %fd63, %fd62, %fd61;
+	st.global.f64 	[%rd3], %fd65;
+	add.s32 	%r12, %r12, 1;
+	setp.lt.s32	%p2, %r12, 20;
+	@%p2 bra 	BB0_3;
 
-	// .globl	filter_w_relu_layer
-.visible .entry filter_w_relu_layer(
-	.param .u64 filter_w_relu_layer_param_0
-)
-{
-	.reg .pred 	%p<14>;
-	.reg .b32 	%r<3>;
-	.reg .f64 	%fd<11>;
-	.reg .b64 	%rd<17>;
+	cvt.u32.u64	%r10, %rd5;
+	add.s32 	%r11, %r10, 1;
+	setp.lt.s32	%p3, %r11, 10;
+	@%p3 bra 	BB0_2;
 
-
-	ld.param.u64 	%rd2, [filter_w_relu_layer_param_0];
-	mov.u32 	%r1, %ctaid.x;
-	setp.gt.u32	%p1, %r1, 19;
-	mov.u32 	%r2, %tid.x;
-	setp.gt.u32	%p2, %r2, 19;
-	or.pred  	%p3, %p1, %p2;
-	@%p3 bra 	BB1_21;
-
-	cvta.to.global.u64 	%rd3, %rd2;
-	mul.wide.u32 	%rd4, %r1, 160;
-	add.s64 	%rd5, %rd3, %rd4;
-	mul.wide.u32 	%rd6, %r2, 8;
-	add.s64 	%rd1, %rd5, %rd6;
-	ld.global.f64 	%fd1, [%rd1];
-	setp.geu.f64	%p4, %fd1, 0d0000000000000000;
-	@%p4 bra 	BB1_3;
-
-	mov.u64 	%rd7, 0;
-	st.global.u64 	[%rd1], %rd7;
-
-BB1_3:
-	ld.global.f64 	%fd2, [%rd1+3200];
-	setp.geu.f64	%p5, %fd2, 0d0000000000000000;
-	@%p5 bra 	BB1_5;
-
-	mov.u64 	%rd8, 0;
-	st.global.u64 	[%rd1+3200], %rd8;
-
-BB1_5:
-	ld.global.f64 	%fd3, [%rd1+6400];
-	setp.geu.f64	%p6, %fd3, 0d0000000000000000;
-	@%p6 bra 	BB1_7;
-
-	mov.u64 	%rd9, 0;
-	st.global.u64 	[%rd1+6400], %rd9;
-
-BB1_7:
-	ld.global.f64 	%fd4, [%rd1+9600];
-	setp.geu.f64	%p7, %fd4, 0d0000000000000000;
-	@%p7 bra 	BB1_9;
-
-	mov.u64 	%rd10, 0;
-	st.global.u64 	[%rd1+9600], %rd10;
-
-BB1_9:
-	ld.global.f64 	%fd5, [%rd1+12800];
-	setp.geu.f64	%p8, %fd5, 0d0000000000000000;
-	@%p8 bra 	BB1_11;
-
-	mov.u64 	%rd11, 0;
-	st.global.u64 	[%rd1+12800], %rd11;
-
-BB1_11:
-	ld.global.f64 	%fd6, [%rd1+16000];
-	setp.geu.f64	%p9, %fd6, 0d0000000000000000;
-	@%p9 bra 	BB1_13;
-
-	mov.u64 	%rd12, 0;
-	st.global.u64 	[%rd1+16000], %rd12;
-
-BB1_13:
-	ld.global.f64 	%fd7, [%rd1+19200];
-	setp.geu.f64	%p10, %fd7, 0d0000000000000000;
-	@%p10 bra 	BB1_15;
-
-	mov.u64 	%rd13, 0;
-	st.global.u64 	[%rd1+19200], %rd13;
-
-BB1_15:
-	ld.global.f64 	%fd8, [%rd1+22400];
-	setp.geu.f64	%p11, %fd8, 0d0000000000000000;
-	@%p11 bra 	BB1_17;
-
-	mov.u64 	%rd14, 0;
-	st.global.u64 	[%rd1+22400], %rd14;
-
-BB1_17:
-	ld.global.f64 	%fd9, [%rd1+25600];
-	setp.geu.f64	%p12, %fd9, 0d0000000000000000;
-	@%p12 bra 	BB1_19;
-
-	mov.u64 	%rd15, 0;
-	st.global.u64 	[%rd1+25600], %rd15;
-
-BB1_19:
-	ld.global.f64 	%fd10, [%rd1+28800];
-	setp.geu.f64	%p13, %fd10, 0d0000000000000000;
-	@%p13 bra 	BB1_21;
-
-	mov.u64 	%rd16, 0;
-	st.global.u64 	[%rd1+28800], %rd16;
-
-BB1_21:
+BB0_5:
 	ret;
 }
 
@@ -212,99 +156,164 @@ BB1_21:
 	.param .u64 filter_w_conv_layer_param_2
 )
 {
-	.reg .pred 	%p<4>;
-	.reg .b32 	%r<9>;
-	.reg .f64 	%fd<41>;
-	.reg .b64 	%rd<23>;
+	.reg .pred 	%p<5>;
+	.reg .b32 	%r<12>;
+	.reg .f64 	%fd<77>;
+	.reg .b64 	%rd<30>;
 
 
-	ld.param.u64 	%rd1, [filter_w_conv_layer_param_0];
-	ld.param.u64 	%rd2, [filter_w_conv_layer_param_1];
-	ld.param.u64 	%rd3, [filter_w_conv_layer_param_2];
+	ld.param.u64 	%rd2, [filter_w_conv_layer_param_0];
+	ld.param.u64 	%rd3, [filter_w_conv_layer_param_1];
+	ld.param.u64 	%rd4, [filter_w_conv_layer_param_2];
 	mov.u32 	%r1, %ctaid.x;
-	setp.gt.u32	%p1, %r1, 99;
+	setp.gt.u32	%p1, %r1, 9;
 	mov.u32 	%r2, %tid.x;
-	setp.gt.u32	%p2, %r2, 99;
+	setp.gt.u32	%p2, %r2, 399;
 	or.pred  	%p3, %p1, %p2;
-	@%p3 bra 	BB2_2;
+	@%p3 bra 	BB1_3;
 
-	cvta.to.global.u64 	%rd4, %rd1;
-	mul.wide.u32 	%rd5, %r1, 800;
-	add.s64 	%rd6, %rd4, %rd5;
-	mul.wide.u32 	%rd7, %r2, 8;
-	add.s64 	%rd8, %rd6, %rd7;
-	mul.wide.u32 	%rd9, %r1, -858993459;
-	shr.u64 	%rd10, %rd9, 34;
-	cvt.u32.u64	%r3, %rd10;
+	cvta.to.global.u64 	%rd5, %rd2;
+	cvta.to.global.u64 	%rd6, %rd4;
+	mul.wide.u32 	%rd7, %r2, -858993459;
+	shr.u64 	%rd8, %rd7, 36;
+	cvt.u32.u64	%r3, %rd8;
 	mul.lo.s32 	%r4, %r3, 5;
-	sub.s32 	%r5, %r1, %r4;
-	mul.wide.u32 	%rd11, %r2, -858993459;
-	shr.u64 	%rd12, %rd11, 34;
-	cvt.u32.u64	%r6, %rd12;
+	mul.lo.s32 	%r5, %r3, 20;
+	sub.s32 	%r6, %r2, %r5;
 	mul.lo.s32 	%r7, %r6, 5;
-	sub.s32 	%r8, %r2, %r7;
-	cvta.to.global.u64 	%rd13, %rd2;
-	mul.wide.u32 	%rd14, %r5, 40;
-	add.s64 	%rd15, %rd13, %rd14;
-	mul.wide.u32 	%rd16, %r8, 8;
+	mul.wide.u32 	%rd9, %r1, 3200;
+	add.s64 	%rd10, %rd6, %rd9;
+	mul.wide.u32 	%rd11, %r3, 160;
+	add.s64 	%rd12, %rd10, %rd11;
+	mul.wide.u32 	%rd13, %r6, 8;
+	add.s64 	%rd1, %rd12, %rd13;
+	mul.wide.u32 	%rd14, %r4, 800;
+	add.s64 	%rd15, %rd5, %rd14;
+	mul.wide.u32 	%rd16, %r7, 8;
 	add.s64 	%rd17, %rd15, %rd16;
-	ld.global.f64 	%fd1, [%rd17];
-	ld.global.f64 	%fd2, [%rd8];
 	cvta.to.global.u64 	%rd18, %rd3;
-	mul.wide.u32 	%rd19, %r3, 160;
+	mul.wide.u32 	%rd19, %r1, 200;
 	add.s64 	%rd20, %rd18, %rd19;
-	mul.wide.u32 	%rd21, %r6, 8;
-	add.s64 	%rd22, %rd20, %rd21;
-	ld.global.f64 	%fd3, [%rd22];
+	ld.global.f64 	%fd1, [%rd20];
+	ld.global.f64 	%fd2, [%rd17];
+	ld.global.f64 	%fd3, [%rd1];
 	fma.rn.f64 	%fd4, %fd2, %fd1, %fd3;
-	ld.global.f64 	%fd5, [%rd22+3200];
-	ld.global.f64 	%fd6, [%rd22+6400];
-	ld.global.f64 	%fd7, [%rd22+9600];
-	ld.global.f64 	%fd8, [%rd22+12800];
-	ld.global.f64 	%fd9, [%rd22+16000];
-	ld.global.f64 	%fd10, [%rd22+19200];
-	ld.global.f64 	%fd11, [%rd22+22400];
-	ld.global.f64 	%fd12, [%rd22+25600];
-	ld.global.f64 	%fd13, [%rd22+28800];
-	st.global.f64 	[%rd22], %fd4;
-	ld.global.f64 	%fd14, [%rd17+200];
-	ld.global.f64 	%fd15, [%rd8];
-	fma.rn.f64 	%fd16, %fd15, %fd14, %fd5;
-	st.global.f64 	[%rd22+3200], %fd16;
-	ld.global.f64 	%fd17, [%rd17+400];
-	ld.global.f64 	%fd18, [%rd8];
-	fma.rn.f64 	%fd19, %fd18, %fd17, %fd6;
-	st.global.f64 	[%rd22+6400], %fd19;
-	ld.global.f64 	%fd20, [%rd17+600];
-	ld.global.f64 	%fd21, [%rd8];
-	fma.rn.f64 	%fd22, %fd21, %fd20, %fd7;
-	st.global.f64 	[%rd22+9600], %fd22;
-	ld.global.f64 	%fd23, [%rd17+800];
-	ld.global.f64 	%fd24, [%rd8];
-	fma.rn.f64 	%fd25, %fd24, %fd23, %fd8;
-	st.global.f64 	[%rd22+12800], %fd25;
-	ld.global.f64 	%fd26, [%rd17+1000];
-	ld.global.f64 	%fd27, [%rd8];
-	fma.rn.f64 	%fd28, %fd27, %fd26, %fd9;
-	st.global.f64 	[%rd22+16000], %fd28;
-	ld.global.f64 	%fd29, [%rd17+1200];
-	ld.global.f64 	%fd30, [%rd8];
-	fma.rn.f64 	%fd31, %fd30, %fd29, %fd10;
-	st.global.f64 	[%rd22+19200], %fd31;
-	ld.global.f64 	%fd32, [%rd17+1400];
-	ld.global.f64 	%fd33, [%rd8];
-	fma.rn.f64 	%fd34, %fd33, %fd32, %fd11;
-	st.global.f64 	[%rd22+22400], %fd34;
-	ld.global.f64 	%fd35, [%rd17+1600];
-	ld.global.f64 	%fd36, [%rd8];
-	fma.rn.f64 	%fd37, %fd36, %fd35, %fd12;
-	st.global.f64 	[%rd22+25600], %fd37;
-	ld.global.f64 	%fd38, [%rd17+1800];
-	ld.global.f64 	%fd39, [%rd8];
-	fma.rn.f64 	%fd40, %fd39, %fd38, %fd13;
-	st.global.f64 	[%rd22+28800], %fd40;
+	st.global.f64 	[%rd1], %fd4;
+	add.s32 	%r8, %r7, 1;
+	mul.wide.u32 	%rd21, %r8, 8;
+	add.s64 	%rd22, %rd15, %rd21;
+	ld.global.f64 	%fd5, [%rd20+8];
+	ld.global.f64 	%fd6, [%rd22];
+	fma.rn.f64 	%fd7, %fd6, %fd5, %fd4;
+	st.global.f64 	[%rd1], %fd7;
+	add.s32 	%r9, %r7, 2;
+	mul.wide.u32 	%rd23, %r9, 8;
+	add.s64 	%rd24, %rd15, %rd23;
+	ld.global.f64 	%fd8, [%rd20+16];
+	ld.global.f64 	%fd9, [%rd24];
+	fma.rn.f64 	%fd10, %fd9, %fd8, %fd7;
+	st.global.f64 	[%rd1], %fd10;
+	add.s32 	%r10, %r7, 3;
+	mul.wide.u32 	%rd25, %r10, 8;
+	add.s64 	%rd26, %rd15, %rd25;
+	ld.global.f64 	%fd11, [%rd20+24];
+	ld.global.f64 	%fd12, [%rd26];
+	fma.rn.f64 	%fd13, %fd12, %fd11, %fd10;
+	st.global.f64 	[%rd1], %fd13;
+	add.s32 	%r11, %r7, 4;
+	mul.wide.u32 	%rd27, %r11, 8;
+	add.s64 	%rd28, %rd15, %rd27;
+	ld.global.f64 	%fd14, [%rd20+32];
+	ld.global.f64 	%fd15, [%rd28];
+	fma.rn.f64 	%fd16, %fd15, %fd14, %fd13;
+	st.global.f64 	[%rd1], %fd16;
+	ld.global.f64 	%fd17, [%rd20+40];
+	ld.global.f64 	%fd18, [%rd17+800];
+	fma.rn.f64 	%fd19, %fd18, %fd17, %fd16;
+	st.global.f64 	[%rd1], %fd19;
+	ld.global.f64 	%fd20, [%rd20+48];
+	ld.global.f64 	%fd21, [%rd22+800];
+	fma.rn.f64 	%fd22, %fd21, %fd20, %fd19;
+	st.global.f64 	[%rd1], %fd22;
+	ld.global.f64 	%fd23, [%rd20+56];
+	ld.global.f64 	%fd24, [%rd24+800];
+	fma.rn.f64 	%fd25, %fd24, %fd23, %fd22;
+	st.global.f64 	[%rd1], %fd25;
+	ld.global.f64 	%fd26, [%rd20+64];
+	ld.global.f64 	%fd27, [%rd26+800];
+	fma.rn.f64 	%fd28, %fd27, %fd26, %fd25;
+	st.global.f64 	[%rd1], %fd28;
+	ld.global.f64 	%fd29, [%rd20+72];
+	ld.global.f64 	%fd30, [%rd28+800];
+	fma.rn.f64 	%fd31, %fd30, %fd29, %fd28;
+	st.global.f64 	[%rd1], %fd31;
+	ld.global.f64 	%fd32, [%rd20+80];
+	ld.global.f64 	%fd33, [%rd17+1600];
+	fma.rn.f64 	%fd34, %fd33, %fd32, %fd31;
+	st.global.f64 	[%rd1], %fd34;
+	ld.global.f64 	%fd35, [%rd20+88];
+	ld.global.f64 	%fd36, [%rd22+1600];
+	fma.rn.f64 	%fd37, %fd36, %fd35, %fd34;
+	st.global.f64 	[%rd1], %fd37;
+	ld.global.f64 	%fd38, [%rd20+96];
+	ld.global.f64 	%fd39, [%rd24+1600];
+	fma.rn.f64 	%fd40, %fd39, %fd38, %fd37;
+	st.global.f64 	[%rd1], %fd40;
+	ld.global.f64 	%fd41, [%rd20+104];
+	ld.global.f64 	%fd42, [%rd26+1600];
+	fma.rn.f64 	%fd43, %fd42, %fd41, %fd40;
+	st.global.f64 	[%rd1], %fd43;
+	ld.global.f64 	%fd44, [%rd20+112];
+	ld.global.f64 	%fd45, [%rd28+1600];
+	fma.rn.f64 	%fd46, %fd45, %fd44, %fd43;
+	st.global.f64 	[%rd1], %fd46;
+	ld.global.f64 	%fd47, [%rd20+120];
+	ld.global.f64 	%fd48, [%rd17+2400];
+	fma.rn.f64 	%fd49, %fd48, %fd47, %fd46;
+	st.global.f64 	[%rd1], %fd49;
+	ld.global.f64 	%fd50, [%rd20+128];
+	ld.global.f64 	%fd51, [%rd22+2400];
+	fma.rn.f64 	%fd52, %fd51, %fd50, %fd49;
+	st.global.f64 	[%rd1], %fd52;
+	ld.global.f64 	%fd53, [%rd20+136];
+	ld.global.f64 	%fd54, [%rd24+2400];
+	fma.rn.f64 	%fd55, %fd54, %fd53, %fd52;
+	st.global.f64 	[%rd1], %fd55;
+	ld.global.f64 	%fd56, [%rd20+144];
+	ld.global.f64 	%fd57, [%rd26+2400];
+	fma.rn.f64 	%fd58, %fd57, %fd56, %fd55;
+	st.global.f64 	[%rd1], %fd58;
+	ld.global.f64 	%fd59, [%rd20+152];
+	ld.global.f64 	%fd60, [%rd28+2400];
+	fma.rn.f64 	%fd61, %fd60, %fd59, %fd58;
+	st.global.f64 	[%rd1], %fd61;
+	ld.global.f64 	%fd62, [%rd20+160];
+	ld.global.f64 	%fd63, [%rd17+3200];
+	fma.rn.f64 	%fd64, %fd63, %fd62, %fd61;
+	st.global.f64 	[%rd1], %fd64;
+	ld.global.f64 	%fd65, [%rd20+168];
+	ld.global.f64 	%fd66, [%rd22+3200];
+	fma.rn.f64 	%fd67, %fd66, %fd65, %fd64;
+	st.global.f64 	[%rd1], %fd67;
+	ld.global.f64 	%fd68, [%rd20+176];
+	ld.global.f64 	%fd69, [%rd24+3200];
+	fma.rn.f64 	%fd70, %fd69, %fd68, %fd67;
+	st.global.f64 	[%rd1], %fd70;
+	ld.global.f64 	%fd71, [%rd20+184];
+	ld.global.f64 	%fd72, [%rd26+3200];
+	fma.rn.f64 	%fd73, %fd72, %fd71, %fd70;
+	st.global.f64 	[%rd1], %fd73;
+	ld.global.f64 	%fd74, [%rd20+192];
+	ld.global.f64 	%fd75, [%rd28+3200];
+	fma.rn.f64 	%fd76, %fd75, %fd74, %fd73;
+	st.global.f64 	[%rd1], %fd76;
+	setp.geu.f64	%p4, %fd76, 0d0000000000000000;
+	@%p4 bra 	BB1_3;
 
-BB2_2:
+	mov.u64 	%rd29, 0;
+	st.global.u64 	[%rd1], %rd29;
+
+BB1_3:
 	ret;
 }
 

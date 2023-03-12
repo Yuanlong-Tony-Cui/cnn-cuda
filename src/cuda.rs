@@ -45,54 +45,23 @@ impl CudaContext {
         let mut input_matrix = DeviceBox::new(input).unwrap();
         let mut layer1_output_db = DeviceBuffer::from_slice(&[[[0.0f64; CONV_OUT_DIM]; CONV_OUT_DIM]; CONV_LAYER_SIZE])?;
         let mut output_layer_output_db = DeviceBuffer::from_slice(&[0.0f64; OUT_LAYER_SIZE])?;
+        let module = &self.module;
+        let stream = &self.stream;
         unsafe {
-            // There will be (20*20*10) matrix multiplications that need to be done.
-            // Each grid has _ blocks and each block has _ threads.
-            let module = &self.module;
-            let stream = &self.stream;
-            let result = launch!(module.filter_w_conv_layer<<<100, 256, 0, stream>>>(
+            let result = launch!(module.filter_w_conv_layer<<<10, 512, 0, stream>>>(
                 input_matrix.as_device_ptr(),
                 self.conv_layer.as_device_ptr(),
                 layer1_output_db.as_device_ptr()
             ));
 
-            let result = launch!(module.filter_w_relu_layer<<<20, 256, 0, stream>>>(
-                layer1_output_db.as_device_ptr()
-            ));
-
-            let result = launch!(module.filter_w_output_layer<<<20, 256, 0, stream>>>(
+            let result = launch!(module.filter_w_output_layer<<<1, 32, 0, stream>>>(
                 layer1_output_db.as_device_ptr(),
                 self.output_layer.as_device_ptr(),
                 output_layer_output_db.as_device_ptr()
             ));
+            
             result?;
         }
-        // let mut layer1_output = [[[0.0f64; CONV_OUT_DIM]; CONV_OUT_DIM]; CONV_LAYER_SIZE];
-        // layer1_output_db.copy_to(&mut layer1_output);
-        // println!("layer1_output[0][0][0]: {}", layer1_output[0][0][0]);
-
-
-        // // 2. ReLU Layer:
-        // unsafe {
-        //     let module = &self.module;
-        //     let stream = &self.stream;
-        //     let result = launch!(module.filter_w_relu_layer<<<20, 256, 0, stream>>>(
-        //         layer1_output_db.as_device_ptr()
-        //     ));
-        //     result?;
-        // }
-
-        // // 3. Output Layer:
-        // unsafe {
-        //     let module = &self.module;
-        //     let stream = &self.stream;
-        //     let result = launch!(module.filter_w_output_layer<<<20, 256, 0, stream>>>(
-        //         layer1_output_db.as_device_ptr(),
-        //         self.output_layer.as_device_ptr(),
-        //         output_layer_output_db.as_device_ptr()
-        //     ));
-        //     result?;
-        // }
         self.stream.synchronize()?;
         let mut output_layer_output = [0.0f64; OUT_LAYER_SIZE];
         output_layer_output_db.copy_to(&mut output_layer_output);
