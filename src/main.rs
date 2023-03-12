@@ -30,7 +30,7 @@ fn convert_row(record: csv::StringRecord, len: usize) -> Result<Vec<f64>, Box<dy
 fn for_each_input<F: FnMut(&InputMatrix) -> Result<OutputVec, Box<dyn Error>>>(
     csv_path: &Path,
     out_path: &Path,
-    mut f: F,
+    mut f: F, // TCUI: Processes a single input matrix and generates an `output` that will be written into the output file
 ) -> Result<(), Box<dyn Error>> {
     let mut rdr = csv::ReaderBuilder::new()
         .has_headers(false)
@@ -64,6 +64,7 @@ fn for_each_input<F: FnMut(&InputMatrix) -> Result<OutputVec, Box<dyn Error>>>(
 
 // CNN file format is 10 lines of 25 numbers (convolution filters) followed by 10 lines of 4000
 // (output weights).
+// TCUI: Reads the <cnn.csv> and contructs a CNN accordingly
 fn read_cnn(csv_path: &Path) -> Result<Box<Cnn>, Box<dyn Error>> {
     let mut rdr = csv::ReaderBuilder::new()
         .has_headers(false)
@@ -126,6 +127,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     for_each_input(  // for each input matrix in the file
         &PathBuf::from(input_file),
         &PathBuf::from(output_file),
+        // TCUI: The closure below processes a single input matrix and
+        // generates an `output` that will be written into the output file
         |input| {  // this closure gets run on each matrix
             let now = std::time::Instant::now();  // start time
 

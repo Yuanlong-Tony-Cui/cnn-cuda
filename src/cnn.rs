@@ -8,10 +8,10 @@ use rustacuda::memory::DeviceCopy;
 // layer, and an output layer of 10 4000x1 weight vectors. CNN output is a 10x1 vector.
 pub const INPUT_DIM: usize = 100;
 pub const FILTER_DIM: usize = 5; // should be factor of INPUT_DIM
-pub const CONV_OUT_DIM: usize = INPUT_DIM / FILTER_DIM;
-pub const CONV_LAYER_SIZE: usize = 10;
-pub const OUT_NEURON_DIM: usize = CONV_OUT_DIM * CONV_OUT_DIM * CONV_LAYER_SIZE;
-pub const OUT_LAYER_SIZE: usize = 10;
+pub const CONV_OUT_DIM: usize = INPUT_DIM / FILTER_DIM; // TCUI: 100/5 = 20
+pub const CONV_LAYER_SIZE: usize = 10; // TCUI: 10 neurons on the convolution layer
+pub const OUT_NEURON_DIM: usize = CONV_OUT_DIM * CONV_OUT_DIM * CONV_LAYER_SIZE; // TCUI: 20*20*10 = 4000
+pub const OUT_LAYER_SIZE: usize = 10; // TCUI: 10 neurons on the output layer
 
 // Use repr(transparent) so the types have same memory layout as arrays
 
