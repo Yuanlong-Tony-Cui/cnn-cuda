@@ -39,9 +39,7 @@ impl CudaContext {
     }
 
     pub fn compute(&mut self, input: &InputMatrix) -> Result<OutputVec, Box<dyn Error>> {
-        // Delegate the work to the GPU by launching <kernel.cu> and
-        // use `threadIdx.x`, `blockIdx.x`, and `blockDim.x` to replace the loops:
-        // 1. Convolution Layer:
+        // Delegate the work to the GPU by launching <kernel.cu>:
         let mut input_matrix = DeviceBox::new(input).unwrap();
         let mut layer1_output_db = DeviceBuffer::from_slice(&[[[0.0f64; CONV_OUT_DIM]; CONV_OUT_DIM]; CONV_LAYER_SIZE])?;
         let mut output_layer_output_db = DeviceBuffer::from_slice(&[0.0f64; OUT_LAYER_SIZE])?;

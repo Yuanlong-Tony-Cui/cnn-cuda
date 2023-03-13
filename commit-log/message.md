@@ -18,7 +18,9 @@ The code in `kernel.cu` is what the GPU actually runs. It utilizes `blockIdx` an
 - On the convolution layer and ReLU layer (in `filter_w_conv_layer()`), 10 blocks of threads were needed, each of which contains 400 threads.
 - On the output layer (in `filter_w_output_layer()`), a single block of 10 threads were used.
 
-### Other tricks
+### Other notes
+Since Nvidia GPUs are needed to run the CUDA-C code, it is important to note that the program should be run specifically on the `eceTesla` machines. For this assignment, when testing the program for its correctness and performance, the server used was `eceTesla1`.
+
 Some issues were encountered when `cuda.rs` was being written, and modifications had to be made to fix these unexpected issues. For example, instead of passing `self.module` and `self.stream` into the `launch!()` function, RustaCUDA somehow required the plain `module` and `stream` to be passed in, meaning something like `let module = &self.module;` was needed before calling `launch!()`.
 
 
@@ -28,10 +30,10 @@ To test for correctness, the following two commands were run:
 - `cargo run --release -- cuda input/cnn.csv input/in.csv output/out_cuda.csv`
 which updates `out.csv` and `out_cuda.csv` respectively with the program outputs. Then, the Python script `compare.py` was run, and the GPU outputs were proven to be correct since "Comparison finished" was printed in the terminal.
 
-To further verify the correctness, the `generate.py` script was also run to generate different input matrices for more tests. The outputs were proven to be the same as the CPU implementation.
+To further verify the correctness, the `generate.py` script was also run 3 times to generate different input matrices for more tests. In all the 3 experiements, the outputs were tested to be the same as the CPU implementation.
 
 ## Testing for performance
-To test for performance, the period spent by the program was recorded by observing the `... microseconds of actual work done` line in the program output. After running the CPU and GPU implementations 3 times,
+To test for performance, the period spent by the program was recorded by observing the "... microseconds of actual work done" line in the program output. After running the CPU and GPU implementations 3 times,
 - the normal CPU approach took 60350ms, 63192ms, and 59835ms, and
 - the GPU approach took 114215ms, 115643ms, and 117442ms.
 
