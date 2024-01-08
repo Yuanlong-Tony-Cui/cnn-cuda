@@ -5,7 +5,7 @@ This project utilizes GPUs to parallelize the convolutional neural network (CNN)
 
 The implementation added in this commit moves some of the processing work to the Nvidia GPU, where parallelism is used to break down a large matrix and conduct the same operation on different sub matrices. Overall, two files were largely modified: `<kernel.cu>` (the CUDA-C code that tells the GPU what to do) and `<cuda.rs>` (the Rust code that prepares the work and launches the CUDA-C code).
 
-This project was built during [ECE459](https://github.com/jzarnett/ece459) labs at the University of Waterloo, and the ECE Linux servers with Nvidia GPUs were used to build and test the performance of this project.
+This project was built during the [ECE459](https://github.com/jzarnett/ece459) labs at the University of Waterloo, and the ECE Linux servers with Nvidia GPUs were used to build and test the performance of this project.
 
 ## Tech details
 
